@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+// AI-assisted: starter PHP example generated with ChatGPT.
 $message = 'PHP is working!';
 ?>
 
