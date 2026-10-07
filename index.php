@@ -24,3 +24,53 @@ function e(string $value): string {
   return htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
 }
 // htmlspecialchars() converts HTML characters into solid and safe text
+
+
+
+// SEARCHING FOR FOOD IN THE DATABASE
+
+$food_searched = value_trim('q');
+// gets user's typed input named q and removes extra spaces
+// stores results as a variable in "food_searched"
+// food_searched will now contain their input
+
+$food_results = [];
+// empty array for matching recipes to collect here
+
+$recipes = [
+  'chicken',
+  'chicken 2',
+  'chicken 3',
+  'milk',
+  'yogurt',
+  'rice',
+  'green bean'
+  'chicken and rice'
+];
+// temporary cookbook array containing my recipes
+// it will fill bigger with the recipes from the 200 pdfs later 
+
+if ($food_searched !== '') {
+// only do the following if this condition is true
+// only seach recipes if the user actually types something 
+
+  foreach ($recipes as $recipe) {
+// foreach is a loop
+// it goes through all my arrays in $recipes one recipe at a time
+// $recipe represents whichever recipe PHP currently is checking
+
+    if (str_contains(
+// asks does this text contain other text 
+// checking whether the recipe contains the search
+      strtolower($recipe), 
+      strtolower($food_searched)
+      )) {
+// makes the text lowercase so all variations of FISH Fish fish work
+// does chicken 2 contain chicken?
+// does chicken and rice contain rice?
+      $food_results[] = $recipe;
+    }
+  }
+}
+// if a recipe matches results, add that recipe to $food_results array
+
