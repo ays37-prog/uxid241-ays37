@@ -74,3 +74,65 @@ if ($food_searched !== '') {
 }
 // if a recipe matches results, add that recipe to $food_results array
 
+
+
+// SUBMITTING THE RECIPE 
+
+$recipe_name = '';
+$email = '';
+$errors = [];
+$success = false;
+// start empty since user hasn't submitted anything
+// empty array where error messages cn be added
+// clears the form since it hasn't been submitted yet
+
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+  // did the user submit the POST form
+  $recipe_name = post_value('name');
+  $email = post_value('email');
+  // get user's submitted recipe name and email
+  // trim extra spaces
+  // store values in $recipename and $email
+
+
+
+  // VALIDATING THE RECIPE NAME
+  
+  if ($recipe_name === '') {
+    $errors[] = 'Recipe name is required.';
+  }
+  // makes sure the user didn't submit nothing
+  // error message gets added to $errors array
+
+  if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    $errors[] = 'Please enter a valid email address.';
+  }
+  // checks if the email address is invalid
+  // error message gets added to $errors array
+
+  if (empty($errors)) {
+    $success = true;
+  }
+}
+  // if it passes the conditions success updates to true 
+?>
+
+ <!-- PHP SET UP ASSIGNMENT FROM WEEK 2 -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UXID 241 Cookbook</title>
+</head>
+
+<body>
+
+  <h1>UXID 241 Cookbook</h1>
+
+  <p>Php is working!</p>
+
+
