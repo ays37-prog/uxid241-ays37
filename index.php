@@ -44,8 +44,8 @@ $recipes = [
   'milk',
   'yogurt',
   'rice',
-  'green bean'
-  'chicken and rice'
+  'green bean',
+  'chicken and rice',
 ];
 // temporary cookbook array containing my recipes
 // it will fill bigger with the recipes from the 200 pdfs later 
@@ -98,7 +98,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
   // VALIDATING THE RECIPE NAME
-  
+
   if ($recipe_name === '') {
     $errors[] = 'Recipe name is required.';
   }
@@ -136,3 +136,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <p>Php is working!</p>
 
 
+
+  <!-- SEARCHING FOR THE FOOD -->
+
+  <h2>Food Search</h2>
+
+  <form action="index.php" method="GET">
+      <!--creates an area where users can enter information and submit it -->
+      <!--action="index.php" sends their information to index.php upon search submissoin-->
+
+    <label for="q">Recipe name has:</label>
+      <!--recipe name has: next to the search box above-->
+      <!--q for query aka search-->
+
+    <input
+      type="search"
+      id="q"
+      name="q"
+      value="<?= e($food_searched); ?>"
+    >
+     <!--makes an input box for searching-->
+     <!--this label q aka search belongs to the input box-->
+     <!--name=q sets user's search to q aka search-->
+     <!--URL updates with users submitted search-->
+
+     <!--value box showcases the user's search with their entered item (echo/display)-->
+     <!--also keeps their search visable even upon refresh-->
+     <!--e is my function, displaying text this but making it safe to display first -->
+
+     
+  
