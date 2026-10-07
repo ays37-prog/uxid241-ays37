@@ -166,3 +166,43 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
      
   
+
+    <button type="submit">Search</button>
+  </form>
+      <!--when search button is clicked, form is submitted-->
+      <!--name q (users entered item) gets sent to index.php-->
+
+  <?php if ($food_searched !== '') : ?>
+      <!--if search bar submission is not empty, show results-->
+      <!--if theres no search, no results seen-->
+
+    <p>
+      <?= count($food_results); ?> result(s) for
+      "<?= e($food_searched); ?>"
+      <!--count how many results for their search are in the database-->
+      <!--if searched 'chicken', all the chicken1-3 will return 4 result(s) for chicken-->
+    </p>
+
+    <ul>
+      <?php foreach ($food_results as $recipe) : ?>
+        <li><?= e($recipe); ?></li>
+        <!--go through each item inside $foodresults and list them (echo)-->
+      <?php endforeach; ?>
+    </ul>
+
+  <?php endif; ?>
+
+  <!--
+  $key=string, name of the user's input we're trying to get, set as q
+  $value=string, text passed into the e() function to make sure its safe before displaying
+  $food_searched=string, the item the user searched for
+  $food_results=array, of recipes that matched the search
+  $recipes=array, all of my recipe names (will be big later)
+  $recipe=string, one recipe selected at a time while a foreach loop runs
+  $recipe_name=string, the recipe name submitted through the POST form
+  $email=string, the submitted email address
+  $errors=array, any validation error messages
+  $success=boolean, either true or false, depending on whether submission succeeded
+  $error=string, one error at a time while the error loop runs
+  -->
+
