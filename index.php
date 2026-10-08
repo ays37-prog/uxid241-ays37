@@ -5,6 +5,8 @@ function get_input(string $input_name): string {
   return trim($_GET[$input_name] ?? '');
 } // GET what user entered, trim spaces, returns cleaned text
 
+  // see this POST value if it exists.
+  // if it does not exist, use an empty string instead
 function post_input(string $input_name): string {
   return trim($_POST[$input_name] ?? '');
 } // gets what user entered, trims spaces, returns clean text
@@ -14,6 +16,7 @@ function escape_html(string $text_to_escape): string {
 } // converts HTML characters into solid safe text
 
 
+
 // FOOD SEARCHED IN SEARCHBAR 
 $food_searched_in_bar = get_input('recipe_search'); 
 $recipes_that_match = []; 
@@ -21,16 +24,19 @@ $recipes_that_match = [];
 // empty array, matching recipes stored here
 
 
+
 $all_recipes = [ // array of all recipes
-  'chicken',
-  'chicken 2',
-  'chicken 3',
-  'milk',
-  'yogurt',
   'rice',
-  'green bean',
-  'chicken and rice',
+  'rice and chicken',
+  'rice and beef',
+  'apple',
+  'yogurt',
+  'banana',
+  'baked potato',
+  'mashed potato',
+  'potato french fries',
 ]; 
+
 
 
 if ($food_searched_in_bar !== '') { //user actually types something 
@@ -48,6 +54,7 @@ if ($food_searched_in_bar !== '') { //user actually types something
 }
 
 
+
 // SUBMITTING A RECIPE 
 $submitted_recipe_name = '';
 $submitted_email = '';
@@ -57,6 +64,7 @@ $submission_successful = false;
 
 
 
+//SERVER SIDE VALIDATION
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   // if user submits the POST recipe form then
   $submitted_recipe_name = post_input('name');
@@ -84,6 +92,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <link rel="stylesheet" href="style.css">
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>UXID 241 Cookbook</title>
@@ -94,7 +103,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
 <h2>Search for a food</h2>
-
   <form action="index.php" method="GET"> <!--creates form-->
   <!--sends data to this file's server + appends search to URL-->
   <label for="recipe_search">Recipe name has:</label>
@@ -124,6 +132,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
 
+  <br>
+      
+
+
   <h2>Submit your recipe</h2>
   <?php if (!empty($validation_errors)) : ?> 
   <!--are any error messages stored in $-->
@@ -144,7 +156,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <p>Recipe: <?= escape_html($submitted_recipe_name); ?></p>
     <!--prints submitted recipe name safely preventing cross site scripting-->
     <p>Email: <?= escape_html($submitted_email); ?></p>
-    <!--alsoprints safe email-->
+    <!--also prints safe email-->
   <?php endif; ?>
 
 
@@ -178,23 +190,3 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <button type="submit">Submit your recipe</button> </form>
 </body>
 </html>
-
-
-<!--
-$input_name = variable holding a string, such as 'recipe_search', 'name', or 'email'
-$text_to_escape = variable holding a string that needs to be made safe before displaying
-$food_searched_in_bar = variable holding a string, such as 'chicken' or 'rice'
-$recipes_that_match = variable holding an array of recipes that matched the search
-$all_recipes = variable holding an array of all recipe names
-$an_examined_recipe = variable holding one recipe string at a time while a foreach loop runs
-$submitted_recipe_name = variable holding a string, such as 'Chicken Parmesan'
-$submitted_email = variable holding a string, such as 'name@email.com'
-$validation_errors = variable holding an array of validation error messages
-$submission_successful = variable holding a boolean, either true or false
-$current_error = variable holding one error string at a time while the error foreach loop runs
-
-MY FUNCTIONS:
-get_input() = function that gets a value submitted through GET and trims extra spaces
-post_input() = function that gets a value submitted through POST and trims extra spaces
-escape_html() = function that makes text safe before displaying it in HTML
--->
