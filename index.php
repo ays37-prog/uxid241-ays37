@@ -1,40 +1,27 @@
 <?php
-declare(strict_types=1);
-// 1=strict types on
-// stricter about the types of information that is accepted
+declare(strict_types=1); // strict about type of information accepted
 
-function value_trim(string $key): string {
-  return trim($_GET[$key] ?? '');
-}
-// GET the value the user submitted and trims the fat (extra spaces)
+function get_input(string $input_name): string {
+  return trim($_GET[$input_name] ?? '');
+} // GET what user entered, trim spaces, returns cleaned text
 
-function post_value(string $key): string {
-  return trim($_POST[$key] ?? '');
-}
-// gets information from a POST form
-// get the POST input with its name
-// ??'' use an empty string if it doesnt exist
-// remove extra spaces and return the cleaned value 
+function post_input(string $input_name): string {
+  return trim($_POST[$input_name] ?? '');
+} // gets what user entered, trims spaces, returns clean text
+
+function escape_html(string $text_to_escape): string {
+  return htmlspecialchars($text_to_escape, ENT_QUOTES, 'UTF-8');
+} // converts HTML characters into solid safe text
 
 
-function e(string $value): string {
-  return htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
-}
-// htmlspecialchars() converts HTML characters into solid and safe text
-// INPUT, TRIMMING, & SANITIZATION
+// FOOD SEARCHED IN SEARCHBAR 
+$food_searched_in_bar = get_input('recipe_search'); 
+$recipes_that_match = []; 
+// sets user's search as variable $food_searched_in_bar
+// empty array, matching recipes stored here
 
 
-// SEARCHING FOR FOOD IN THE DATABASE
-
-$food_searched = value_trim('q');
-// gets user's typed input named q and removes extra spaces
-// stores results as a variable in "food_searched"
-// food_searched will now contain their input
-
-$food_results = [];
-// empty array for matching recipes to collect here
-
-$recipes = [
+$all_recipes = [ // array of all recipes
   'chicken',
   'chicken 2',
   'chicken 3',
@@ -43,186 +30,171 @@ $recipes = [
   'rice',
   'green bean',
   'chicken and rice',
-];
-// temporary cookbook array containing my recipes
-// it will fill bigger with the recipes from the 200 pdfs later 
+]; 
 
-if ($food_searched !== '') {
-// only do the following if this condition is true
-// only seach recipes if the user actually types something 
 
-  foreach ($recipes as $recipe) {
-// foreach is a loop
-// it goes through all my arrays in $recipes one recipe at a time
-// $recipe represents whichever recipe PHP currently is checking
-
+if ($food_searched_in_bar !== '') { //user actually types something 
+  foreach ($all_recipes as $an_examined_recipe) { 
     if (str_contains(
-// asks does this text contain other text 
-// checking whether the recipe contains the search
-      strtolower($recipe), 
-      strtolower($food_searched)
+      // temporarily converts everything to lowercase
+      strtolower($an_examined_recipe), 
+      strtolower($food_searched_in_bar)
       )) {
-// makes the text lowercase so all variations of FISH Fish fish work
-// does chicken 2 contain chicken?
-// does chicken and rice contain rice?
-      $food_results[] = $recipe;
+      // only runs when there's a match
+      // loop through all recipes and check if given recipe contain words in searchbar
+      $recipes_that_match[] = $an_examined_recipe;
     }
   }
 }
-// if a recipe matches results, add that recipe to $food_results array
 
 
+// SUBMITTING A RECIPE 
+$submitted_recipe_name = '';
+$submitted_email = '';
+$validation_errors = [];
+$submission_successful = false;
+// default empty/false for everything 
 
-// SUBMITTING THE RECIPE 
-
-$recipe_name = '';
-$email = '';
-$errors = [];
-$success = false;
-// start empty since user hasn't submitted anything
-// empty array where error messages cn be added
-// clears the form since it hasn't been submitted yet
 
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-  // did the user submit the POST form
-  $recipe_name = post_value('name');
-  $email = post_value('email');
-  // get user's submitted recipe name and email
-  // trim extra spaces
-  // store values in $recipename and $email
+  // if user submits the POST recipe form then
+  $submitted_recipe_name = post_input('name');
+  $submitted_email = post_input('email');
+  // store corresponding values in each varible
 
 
 
-  // VALIDATING THE RECIPE NAME
-
-  if ($recipe_name === '') {
-    $errors[] = 'Recipe name is required.';
+// VALIDATING SUBMITTED RECIPES
+  if ($submitted_recipe_name === '') { //submission can't be blank
+    $validation_errors[] = 'Recipe name is required.';
   }
-  // makes sure the user didn't submit nothing
-  // error message gets added to $errors array
-
-  if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-    $errors[] = 'Please enter a valid email address.';
+  if (!filter_var($submitted_email, FILTER_VALIDATE_EMAIL)) {
+    $validation_errors[] = 'Please enter a valid email address.';
   }
-  // checks if the email address is invalid
-  // error message gets added to $errors array
-
-  if (empty($errors)) {
-    $success = true;
+  if (empty($validation_errors)) {
+    $submission_successful = true;
   }
 }
-  // if it passes the conditions success updates to true 
 ?>
 
- <!-- PHP SET UP ASSIGNMENT FROM WEEK 2 -->
 
+
+<!--PHP SET UP ASSIGNMENT WEEK 2-->
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>UXID 241 Cookbook</title>
 </head>
-
 <body>
-
   <h1>UXID 241 Cookbook</h1>
 
-  <p>Php is working!</p>
 
 
+<h2>Search for a food</h2>
 
-  <!-- SEARCHING FOR THE FOOD -->
-
-  <h2>Food Search</h2>
-
-  <form action="index.php" method="GET">
-      <!--creates an area where users can enter information and submit it -->
-      <!--action="index.php" sends their information to index.php upon search submissoin-->
-
-    <label for="q">Recipe name has:</label>
-      <!--recipe name has: next to the search box above-->
-      <!--q for query aka search-->
-
-    <input
-      type="search"
-      id="q"
-      name="q"
-      value="<?= e($food_searched); ?>"
-    >
-     <!--makes an input box for searching-->
-     <!--this label q aka search belongs to the input box-->
-     <!--name=q sets user's search to q aka search-->
-     <!--URL updates with users submitted search-->
-
-     <!--value box showcases the user's search with their entered item (echo/display)-->
-     <!--also keeps their search visable even upon refresh-->
-     <!--e is my function, displaying text this but making it safe to display first -->
-
-     
+  <form action="index.php" method="GET"> <!--creates form-->
+  <!--sends data to this file's server + appends search to URL-->
+  <label for="recipe_search">Recipe name has:</label>
+  <!--creates form with x icon-->
+    
+  <input
+  type="search" 
+  id="recipe_search"
+  name="recipe_search"
+  value="<?= escape_html($food_searched_in_bar); ?>">
+  <!--keep in searchbar upon page reloading-->
+  <button type="submit">Search</button> </form> 
   
 
-    <button type="submit">Search</button>
-  </form>
-      <!--when search button is clicked, form is submitted-->
-      <!--name q (users entered item) gets sent to index.php-->
 
-  <?php if ($food_searched !== '') : ?>
-      <!--if search bar submission is not empty, show results-->
-      <!--if theres no search, no results seen-->
-
-    <p>
-      <?= count($food_results); ?> result(s) for
-      "<?= e($food_searched); ?>"
-      <!--count how many results for their search are in the database-->
-      <!--if searched 'chicken', all the chicken1-3 will return 4 result(s) for chicken-->
-    </p>
-
-    <ul>
-      <?php foreach ($food_results as $recipe) : ?>
-        <li><?= e($recipe); ?></li>
-        <!--go through each item inside $foodresults and list them (echo)-->
-      <?php endforeach; ?>
-    </ul>
-
-  <?php endif; ?>
-
-  <!-- RECIPE SUBMISSION -->
-
-  <h2>Recipe Submission</h2>
-
-  <?php if (!empty($errors)) : ?> 
-  <!--checks if errors array contains any error messages-->
-
-    <ul>
-      <?php foreach ($errors as $error) : ?>
-      <li><?= e($error); ?></li>
-      <?php endforeach; ?>
-    </ul>
-    <!--goes through every eror stored inside $errors array-->
-    <!--every error listed in bullet-->
-
+  <?php if ($food_searched_in_bar !== '') : ?> 
+    <!--submission can't be blank-->
+    <p><?= count($recipes_that_match); ?> result(s) for 
+    "<?= escape_html($food_searched_in_bar); ?>"</p>
+    <!--count results for their search. all "chicken" recipes will return-->
+  
+    <ul><?php foreach ($recipes_that_match as $an_examined_recipe) : ?>
+      <li><?= escape_html($an_examined_recipe); ?></li>
+      <!--list every item that matched-->
+      <?php endforeach; ?></ul>
   <?php endif; ?>
 
 
 
+  <h2>Submit your recipe</h2>
+  <?php if (!empty($validation_errors)) : ?> 
+  <!--are any error messages stored in $-->
+
+  <!--if errors exist, open bulleted list-->
+  <ul><?php foreach ($validation_errors as $current_error) : ?>
+    <li><?= escape_html($current_error); ?></li>
+    <!--list all errors in bullets-->
+    <?php endforeach; ?></ul>
+    <?php endif; ?>
+    <!--escape_html blocks malicious code-->
 
 
 
+  <!--SUBMISSION WORKS-->
+  <?php if ($submission_successful) : ?>
+    <p>Recipe submitted successfully!</p>
+    <p>Recipe: <?= escape_html($submitted_recipe_name); ?></p>
+    <!--prints submitted recipe name safely preventing cross site scripting-->
+    <p>Email: <?= escape_html($submitted_email); ?></p>
+    <!--alsoprints safe email-->
+  <?php endif; ?>
 
-  <!--
-  $key=string, name of the user's input we're trying to get, set as q
-  $value=string, text passed into the e() function to make sure its safe before displaying
-  $food_searched=string, the item the user searched for
-  $food_results=array, of recipes that matched the search
-  $recipes=array, all of my recipe names (will be big later)
-  $recipe=string, one recipe selected at a time while a foreach loop runs
-  $recipe_name=string, the recipe name submitted through the POST form
-  $email=string, the submitted email address
-  $errors=array, any validation error messages
-  $success=boolean, either true or false, depending on whether submission succeeded
-  $error=string, one error at a time while the error loop runs
-  -->
 
+
+  <!--SUBMIT A RECIPE FORM-->
+  <form action="index.php" method="POST">
+  <!--sends data to this file's server + doesn't append to URL-->
+
+    <label for="name">Recipe Name:</label>
+    <input
+      type="text"
+      id="name"
+      name="name"
+      value="<?= escape_html($submitted_recipe_name); ?>">
+
+
+      <br>
+
+
+    <label for="email">Your Email:</label>
+    <input
+      type="email"
+      id="email"
+      name="email"
+      value="<?= escape_html($submitted_email); ?>">
+
+
+      <br>
+
+
+    <button type="submit">Submit your recipe</button> </form>
+</body>
+</html>
+
+
+<!--
+$input_name = variable holding a string, such as 'recipe_search', 'name', or 'email'
+$text_to_escape = variable holding a string that needs to be made safe before displaying
+$food_searched_in_bar = variable holding a string, such as 'chicken' or 'rice'
+$recipes_that_match = variable holding an array of recipes that matched the search
+$all_recipes = variable holding an array of all recipe names
+$an_examined_recipe = variable holding one recipe string at a time while a foreach loop runs
+$submitted_recipe_name = variable holding a string, such as 'Chicken Parmesan'
+$submitted_email = variable holding a string, such as 'name@email.com'
+$validation_errors = variable holding an array of validation error messages
+$submission_successful = variable holding a boolean, either true or false
+$current_error = variable holding one error string at a time while the error foreach loop runs
+
+MY FUNCTIONS:
+get_input() = function that gets a value submitted through GET and trims extra spaces
+post_input() = function that gets a value submitted through POST and trims extra spaces
+escape_html() = function that makes text safe before displaying it in HTML
+-->
