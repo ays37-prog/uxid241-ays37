@@ -1,15 +1,12 @@
 <?php
 declare(strict_types=1);
-// 0=strict types off
 // 1=strict types on
-// stricter about the types of information my function accepts
+// stricter about the types of information that is accepted
 
 function value_trim(string $key): string {
   return trim($_GET[$key] ?? '');
 }
-// gets that value the user submitted through GET and trims extra spaces the user may type 
-// if the item doesn't exist, ??'' is blank 
-
+// GET the value the user submitted and trims the fat (extra spaces)
 
 function post_value(string $key): string {
   return trim($_POST[$key] ?? '');
@@ -24,7 +21,7 @@ function e(string $value): string {
   return htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
 }
 // htmlspecialchars() converts HTML characters into solid and safe text
-
+// INPUT, TRIMMING, & SANITIZATION
 
 
 // SEARCHING FOR FOOD IN THE DATABASE
@@ -191,6 +188,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </ul>
 
   <?php endif; ?>
+
+  <!-- RECIPE SUBMISSION -->
+
+  <h2>Recipe Submission</h2>
+
+  <?php if (!empty($errors)) : ?> 
+  <!--checks if errors array contains any error messages-->
+
+    <ul>
+      <?php foreach ($errors as $error) : ?>
+      <li><?= e($error); ?></li>
+      <?php endforeach; ?>
+    </ul>
+    <!--goes through every eror stored inside $errors array-->
+    <!--every error listed in bullet-->
+
+  <?php endif; ?>
+
+
+
+
+
+
 
   <!--
   $key=string, name of the user's input we're trying to get, set as q
