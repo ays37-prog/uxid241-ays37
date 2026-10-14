@@ -1,19 +1,22 @@
 <?php
 declare(strict_types=1); // strict about type of information accepted
 
+
 function get_input(string $input_name): string {
   return trim($_GET[$input_name] ?? '');
 } // GET what user entered, trim spaces, returns cleaned text
 
-  // see this POST value if it exists.
+
   // if it does not exist, use an empty string instead
 function post_input(string $input_name): string {
   return trim($_POST[$input_name] ?? '');
 } // gets what user entered, trims spaces, returns clean text
 
+
 function escape_html(string $text_to_escape): string {
   return htmlspecialchars($text_to_escape, ENT_QUOTES, 'UTF-8');
 } // converts HTML characters into solid safe text
+  // ai assisted set up
 
 
 
@@ -117,7 +120,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <button type="submit">Search</button> </form> 
   
 
-
+    <!--ai assisted conversion of special characters to safe neutral code-->
   <?php if ($food_searched_in_bar !== '') : ?> 
     <!--submission can't be blank-->
     <p><?= count($recipes_that_match); ?> result(s) for 
@@ -190,3 +193,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <button type="submit">Submit your recipe</button> </form>
 </body>
 </html>
+
+  <!--CLASSWORK-->
+    <!--open MAMP tap click airplane webstart-->
+    <!--PHP my admin-->
+    <!--ID int length11. index primary key, a!on, -->
+    <!--title carchar 120-->
+    <!--desc TEXT-->
+    <!--use import tab, browse, structure-->
+
+      <!--put all into-->
