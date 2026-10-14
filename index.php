@@ -123,7 +123,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
   <h1>UXID 241 Cookbook</h1>
 
-  <h2>Recipes from Database</h2>
+  <h2>Recipes from Databa se</h2>
 
 <?php foreach ($database_recipes as $recipe) : ?>
   <!--database recipes with 3 recipes in mySql-->
@@ -133,6 +133,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <h3><?= htmlspecialchars($recipe['title'], ENT_QUOTES, 'UTF-8'); ?></h3>
     <p><?= htmlspecialchars($recipe['description'], ENT_QUOTES, 'UTF-8'); ?></p>
   </article>
+    <!--article separation / sectioning-->
+
 <?php endforeach; ?>
 
 
