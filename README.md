@@ -4,7 +4,7 @@ This repository contains my quarter-long web cookbook for UXID 241. The project 
 
 ## AI use
 
-I used ChatGPT Pro to help me understand the project setup instructions, configure MAMP, and set up my PHP structure. 
+Week 2 set up: I used ChatGPT Pro to help me understand the project setup instructions, configure MAMP, and set up my PHP structure. 
 All AI-generated code in this project will be cited inline, according to the course AI policy with comments.
 
 

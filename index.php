@@ -2,7 +2,27 @@
 declare(strict_types=1); // strict about type of information accepted
 
 
+
+// WEEK 3 DATABASE SETUP
+require __DIR__ . '/db.php';
+
+$sql = 'SELECT id, title, description FROM recipes';
+// actual SQL  query.
+// this query selects the id, title, and description columns from every row in reciples table
+$result = mysqli_query($conn, $sql);
+// use my database connection $conn to run the query stored in $sql
+$database_recipes = mysqli_fetch_all($result, MYSQLI_ASSOC);
+// takes all database rows and turns them into PHP arry
+// results will look like:
+// id => 1,
+// title => 'chicken tacos'
+// description => 'chicken tacos with fresh toppings'
+
+
 function get_input(string $input_name): string {
+
+
+
   return trim($_GET[$input_name] ?? '');
 } // GET what user entered, trim spaces, returns cleaned text
 
@@ -103,6 +123,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
   <h1>UXID 241 Cookbook</h1>
 
+  <h2>Recipes from Database</h2>
+
+<?php foreach ($database_recipes as $recipe) : ?>
+  <!--database recipes with 3 recipes in mySql-->
+   <!--go through every recipe row in db one at a time and temporarily call out current row $recipe-->
+
+  <article>
+    <h3><?= htmlspecialchars($recipe['title'], ENT_QUOTES, 'UTF-8'); ?></h3>
+    <p><?= htmlspecialchars($recipe['description'], ENT_QUOTES, 'UTF-8'); ?></p>
+  </article>
+<?php endforeach; ?>
+
 
 
 <h2>Search for a food</h2>
@@ -193,13 +225,3 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <button type="submit">Submit your recipe</button> </form>
 </body>
 </html>
-
-  <!--CLASSWORK-->
-    <!--open MAMP tap click airplane webstart-->
-    <!--PHP my admin-->
-    <!--ID int length11. index primary key, a!on, -->
-    <!--title carchar 120-->
-    <!--desc TEXT-->
-    <!--use import tab, browse, structure-->
-
-      <!--put all into-->
