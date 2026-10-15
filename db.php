@@ -5,7 +5,7 @@ mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 //report errors don't let them just go
 
 $config = require __DIR__ . '/config.php';
-// loads private config.php. 
+// loads private config.php
 // returned settings store in $config
 
 try {
@@ -24,3 +24,4 @@ try {
   } catch (mysqli_sql_exception $e) {
   exit('Database connection failed.');
 }
+// catch errors and report

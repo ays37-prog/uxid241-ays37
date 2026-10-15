@@ -3,7 +3,7 @@ declare(strict_types=1); // strict about type of information accepted
 
 
 
-// WEEK 3 DATABASE SETUP
+// WEEK 3 DUE WEEK 4 DATABASE SETUP
 require __DIR__ . '/db.php';
 
 $sql = 'SELECT id, title, description FROM recipes';
@@ -14,7 +14,7 @@ $result = mysqli_query($conn, $sql);
 $database_recipes = mysqli_fetch_all($result, MYSQLI_ASSOC);
 // takes all database rows and turns them into PHP arry
 // results will look like:
-// id => 1,
+// id => 0,1,2, etc
 // title => 'chicken tacos'
 // description => 'chicken tacos with fresh toppings'
 
@@ -22,7 +22,7 @@ $database_recipes = mysqli_fetch_all($result, MYSQLI_ASSOC);
 function get_input(string $input_name): string {
 
 
-
+//  GET & POST 
   return trim($_GET[$input_name] ?? '');
 } // GET what user entered, trim spaces, returns cleaned text
 
@@ -123,8 +123,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
   <h1>UXID 241 Cookbook</h1>
 
-  <h2>Recipes from Databa se</h2>
+  <h2>Recipes from Databa</h2>
 
+
+  
+  <!--WEEK 3 - 3 SEED DATA RECIPES DISPLAYED -->
 <?php foreach ($database_recipes as $recipe) : ?>
   <!--database recipes with 3 recipes in mySql-->
    <!--go through every recipe row in db one at a time and temporarily call out current row $recipe-->

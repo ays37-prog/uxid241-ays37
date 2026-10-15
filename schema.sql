@@ -9,7 +9,7 @@ CREATE TABLE recipes (
   description TEXT,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
   --creates desc column. allows longer text.
-  --desciption is not required 
+
 );
 
 INSERT INTO recipes (title, description)
