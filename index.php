@@ -1,23 +1,45 @@
 <?php
-declare(strict_types=1); // strict about type of information accepted
+declare(strict_types=1); 
+// strict about type of information accepted
 
 
 
-// WEEK 3 DUE WEEK 4 DATABASE SETUP
+// WEEK 4 DUE WEEK 5 CATEGORIES SETUP
+
 require __DIR__ . '/db.php';
+// before continuing, load and run code from db.php
+// DIR is the directory to find db.php
 
-$sql = 'SELECT id, title, description FROM recipes';
-// actual SQL  query.
-// this query selects the id, title, and description columns from every row in reciples table
+
+
+$sql = 'SELECT
+          recipes.id,
+          recipes.title,
+          recipes.description,
+          recipes.servings,
+          recipes.prep_time,
+          categories.name AS category
+        FROM recipes
+        INNER JOIN categories
+          ON recipes.category_id = categories.id
+        ORDER BY recipes.title';
+// match each recipe's category_id with the corresponding id in categories
+// id name: 1 chicken, 2 beef, 3 vegetarian, 4 fish & seafood, 5 pork
+// categories.name shows word insead of just number
+// AS category: $recipe['category']
+// FROM: table retrieval FROM recipes
+// INNER JOIN: connect categories table to these recipe results
+// ON: if category_id and title id are same, correct recipe sorting
+// ORDER BY: sort recipes alphabetically by title
+
+
+
 $result = mysqli_query($conn, $sql);
-// use my database connection $conn to run the query stored in $sql
-$database_recipes = mysqli_fetch_all($result, MYSQLI_ASSOC);
-// takes all database rows and turns them into PHP arry
-// results will look like:
-// id => 0,1,2, etc
-// title => 'chicken tacos'
-// description => 'chicken tacos with fresh toppings'
 
+$database_recipes = mysqli_fetch_all($result, MYSQLI_ASSOC);
+// takes dtabase results and turns into PHP array
+// fetch all rows that come back
+// organize each row using database column names
 
 function get_input(string $input_name): string {
 
@@ -121,28 +143,54 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <title>UXID 241 Cookbook</title>
 </head>
 <body>
-  <h1>UXID 241 Cookbook</h1>
 
-  <h2>Recipes from Databa</h2>
+
+
+<h1>UXID 241 Cookbook</h1>
 
 
   
-  <!--WEEK 3 - 3 SEED DATA RECIPES DISPLAYED -->
-<?php foreach ($database_recipes as $recipe) : ?>
-  <!--database recipes with 3 recipes in mySql-->
-   <!--go through every recipe row in db one at a time and temporarily call out current row $recipe-->
+<!--SEED DATA RECIPES DISPLAYED -->
+<h2>Recipes from Database</h2>
 
+<!-- WEEK 4 DUE WEEK 5 - RECIPES READ FROM MYSQL DATABASE -->
+<?php foreach ($database_recipes as $recipe) : ?>
+  <!-- loop through each recipe returned from the database. -->
+  <!-- 1st ancho-orange chicken db row, 2nd beef medallions db row, 3rd broccoli & pesto sw db row -->
+
+
+
+<!-- DISPLAYING ARRAY PF INFORMATION -->
   <article>
-    <h3><?= htmlspecialchars($recipe['title'], ENT_QUOTES, 'UTF-8'); ?></h3>
-    <p><?= htmlspecialchars($recipe['description'], ENT_QUOTES, 'UTF-8'); ?></p>
+
+    <h3><?= escape_html($recipe['title']); ?></h3>
+
+    <p>
+      <?= escape_html($recipe['description']); ?>
+    </p>
+
+    <p>
+      Category: <?= escape_html($recipe['category']); ?>
+    </p>
+
+    <p>
+      Servings: <?= escape_html((string) $recipe['servings']); ?>
+    </p>
+
+    <p>
+      Prep time: <?= escape_html((string) $recipe['prep_time']); ?> minutes.
+    </p>
+
   </article>
-    <!--article separation / sectioning-->
+
+
 
 <?php endforeach; ?>
 
 
 
 <h2>Search for a food</h2>
+
   <form action="index.php" method="GET"> <!--creates form-->
   <!--sends data to this file's server + appends search to URL-->
   <label for="recipe_search">Recipe name has:</label>
