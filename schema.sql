@@ -1,5 +1,7 @@
 -- AI-assisted: schema structure developed with ChatGPT
 -- based on the UXID 241 Alpha requirements and Week 4 lesson.
+-- "PROMPT: can you guide me in setting up my schema.sql file so that it 
+-- categorizes my seed data recipes into phpMyAdmin"
 
 DROP TABLE IF EXISTS recipes;
 DROP TABLE IF EXISTS categories;
