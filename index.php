@@ -151,7 +151,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
   
 <!--SEED DATA RECIPES DISPLAYED -->
-<h2>Recipes from Database</h2>
+<h2>Recipes from Database:</h2>
 
 <!-- WEEK 4 DUE WEEK 5 - RECIPES READ FROM MYSQL DATABASE -->
 <?php foreach ($database_recipes as $recipe) : ?>
@@ -160,36 +160,41 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
 
-<!-- DISPLAYING ARRAY PF INFORMATION -->
+<!-- DISPLAYING ARRAY DB INFORMATION -->
   <article>
 
     <h3><?= escape_html($recipe['title']); ?></h3>
 
-    <p>
+    <ul>
+
+    <li>
       <?= escape_html($recipe['description']); ?>
-    </p>
+    </li>
 
-    <p>
+    <li>
       Category: <?= escape_html($recipe['category']); ?>
-    </p>
+    </li>
 
-    <p>
+    <li>
       Servings: <?= escape_html((string) $recipe['servings']); ?>
-    </p>
+    </li>
 
-    <p>
+    <li>
       Prep time: <?= escape_html((string) $recipe['prep_time']); ?> minutes.
-    </p>
+    </li>
+    
+  </ul>
 
   </article>
-
-
-
 <?php endforeach; ?>
 
 
 
-<h2>Search for a food</h2>
+  <br>
+
+
+
+<h2>Search for a food:</h2>
 
   <form action="index.php" method="GET"> <!--creates form-->
   <!--sends data to this file's server + appends search to URL-->
@@ -224,7 +229,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       
 
 
-  <h2>Submit your recipe</h2>
+  <h2>Submit your recipe:</h2>
   <?php if (!empty($validation_errors)) : ?> 
   <!--are any error messages stored in $-->
 
@@ -261,7 +266,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       value="<?= escape_html($submitted_recipe_name); ?>">
 
 
-      <br>
+      <br><br>
 
 
     <label for="email">Your Email:</label>
@@ -272,7 +277,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       value="<?= escape_html($submitted_email); ?>">
 
 
-      <br>
+      <br><br>
 
 
     <button type="submit">Submit your recipe</button> </form>
