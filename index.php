@@ -69,6 +69,7 @@ function escape_html(string $text_to_escape): string {
 
 // FILTRATION LINKS ACTUALLY FILTER THE RECIPES
 $selected_category = get_input('category');
+$food_searched_in_bar = get_input('recipe_search');
 
 if ($selected_category !== '') {
   $database_recipes = array_filter(
@@ -83,7 +84,6 @@ if ($selected_category !== '') {
 
 
 // FOOD SEARCHED IN SEARCHBAR 
-$food_searched_in_bar = get_input('recipe_search'); 
 $recipes_that_match = []; 
 // sets user's search as variable $food_searched_in_bar
 // empty array, matching recipes stored here
@@ -142,78 +142,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="style.css?v=3">
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>UXID 241 Cookbook</title>
 </head>
 <body>
 
+<main class="main-container">
+
 
 
 <h1>UXID 241 Cookbook</h1>
-
-<!--SEED DATA RECIPES DISPLAYED -->
-<h2>Recipes from Database:</h2>
-
-
-<!--AI ASSISTED FILTRATION CODE -->
-<!--Promppt: Please show me how to set up the initial filtration button system based off of chicken, beef, vegetarian, fish & seafood, pork, and turkey categories in my php admin -->
-<div class="category-filters">
-  <a href="index.php">All</a>
-  <a href="index.php?category=Chicken">Chicken</a>
-  <a href="index.php?category=Beef">Beef</a>
-  <a href="index.php?category=Vegetarian">Vegetarian</a>
-  <a href="index.php?category=Fish%20%26%20Seafood">Fish &amp; Seafood</a>
-  <a href="index.php?category=Pork">Pork</a>
-  <a href="index.php?category=Turkey">Turkey</a>
-</div>
-
-
-<!-- WEEK 4 DUE WEEK 5 - RECIPES READ FROM MYSQL DATABASE -->
-<?php foreach ($database_recipes as $recipe) : ?>
-  <!-- loop through each recipe returned from the database. -->
-  <!-- 1st ancho-orange chicken db row, 2nd beef medallions db row, 3rd broccoli & pesto sw db row -->
-
-
-
-<!-- DISPLAYING ARRAY DB INFORMATION -->
-  <article>
-
-    <h3><?= escape_html($recipe['title']); ?></h3>
-
-    <ul>
-
-    <li>
-      <?= escape_html($recipe['description']); ?>
-    </li>
-
-    <li>
-      Category: <?= escape_html($recipe['category']); ?>
-    </li>
-
-    <li>
-      Servings: <?= escape_html((string) $recipe['servings']); ?>
-    </li>
-
-    <li>
-      Prep time: <?= escape_html((string) $recipe['prep_time']); ?> minutes.
-    </li>
-    
-  </ul>
-
-  </article>
-<?php endforeach; ?>
-
-
-
-  <br>
 
 
 
 <h2>Search for a food:</h2>
 
-  <form action="index.php" method="GET"> <!--creates form-->
+<form action="index.php" method="GET">
+
+  <?php if ($selected_category !== '') : ?>
+    <input
+      type="hidden"
+      name="category"
+      value="<?= escape_html($selected_category); ?>">
+  <?php endif; ?>
   <!--sends data to this file's server + appends search to URL-->
   <label for="recipe_search">Recipe name has:</label>
   <!--creates form with x icon-->
@@ -228,7 +181,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   
 
     <!--ai assisted conversion of special characters to safe neutral code-->
-  <?php if ($food_searched_in_bar !== '') : ?> 
+    <?php if ($food_searched_in_bar !== '') : ?> 
     <!--submission can't be blank-->
     <p><?= count($recipes_that_match); ?> result(s) for 
     "<?= escape_html($food_searched_in_bar); ?>"</p>
@@ -239,6 +192,133 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <!--list every item that matched-->
       <?php endforeach; ?></ul>
   <?php endif; ?>
+
+
+
+
+
+<!--SEED DATA RECIPES DISPLAYED -->
+<h2><?= count($database_recipes); ?> Recipes Match Your Search</h2>
+
+<!--AI ASSISTED FILTRATION CODE -->
+<!--Promppt: Please show me how to set up the initial filtration button system based off of chicken, beef, vegetarian, fish & seafood, pork, and turkey categories in my php admin -->
+<!--Second Promppt: Show me how to visually indicate the current filter in use, working with CSS. -->
+
+<div class="category-filters">
+
+  <a
+    href="index.php"
+    class="<?= $selected_category === '' ? 'active' : ''; ?>">
+    All
+  </a>
+
+  <a
+    href="index.php?category=Chicken"
+    class="<?= $selected_category === 'Chicken' ? 'active' : ''; ?>">
+    Chicken
+  </a>
+
+  <a
+    href="index.php?category=Beef"
+    class="<?= $selected_category === 'Beef' ? 'active' : ''; ?>">
+    Beef
+  </a>
+
+  <a
+    href="index.php?category=Vegetarian"
+    class="<?= $selected_category === 'Vegetarian' ? 'active' : ''; ?>">
+    Vegetarian
+  </a>
+
+  <a
+    href="index.php?category=Fish%20%26%20Seafood"
+    class="<?= $selected_category === 'Fish & Seafood' ? 'active' : ''; ?>">
+    Fish &amp; Seafood
+  </a>
+
+  <a
+    href="index.php?category=Pork"
+    class="<?= $selected_category === 'Pork' ? 'active' : ''; ?>">
+    Pork
+  </a>
+
+  <a
+    href="index.php?category=Turkey"
+    class="<?= $selected_category === 'Turkey' ? 'active' : ''; ?>">
+    Turkey
+  </a>
+
+</div>
+
+
+
+
+
+
+
+<div class="recipe-grid">
+<!-- WEEK 4 DUE WEEK 5 - RECIPES READ FROM MYSQL DATABASE -->
+<?php foreach ($database_recipes as $recipe) : ?>
+  <!-- loop through each recipe returned from the database. -->
+  <!-- 1st ancho-orange chicken db row, 2nd beef medallions db row, 3rd broccoli & pesto sw db row -->
+
+
+
+<!-- DISPLAYING ARRAY DB INFORMATION -->
+  <article class="recipe-card">
+
+
+<!-- RECIPE IMAGES -->
+  <?php if (!empty($recipe['main_image'])) : ?>
+  
+    <img
+    src="<?= escape_html($recipe['main_image']); ?>"
+    alt="<?= escape_html($recipe['title']); ?>">
+
+    
+  <?php endif; ?>
+
+
+  
+
+
+<!-- CLICKABLE LINKS -->
+    <h3>
+    <a href="recipe.php?id=<?= (int) $recipe['id']; ?>">
+    <?= escape_html($recipe['title']); ?>
+    </a>
+    </h3>
+
+
+<!-- SUBTITLE -->
+    <?php if (!empty($recipe['subtitle'])) : ?>
+    <p><?= escape_html($recipe['subtitle']); ?></p>
+    <?php endif; ?>
+
+
+
+   <!-- RECIPE INFO CARD -->
+ 
+<div class="recipe-info">
+  <span class="recipe-category">
+    <?= escape_html($recipe['category']); ?>
+  </span>
+
+  <span class="recipe-servings">
+    <?= escape_html((string) $recipe['servings']); ?> servings
+  </span>
+</div>
+
+  </article>
+<?php endforeach; ?>
+</div>
+
+
+
+  <br>
+
+
+
 
 
 
@@ -298,5 +378,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
     <button type="submit">Submit your recipe</button> </form>
+    </main>
 </body>
 </html>
