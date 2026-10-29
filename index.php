@@ -5,7 +5,6 @@ declare(strict_types=1);
 
 
 // WEEK 4 DUE WEEK 5 CATEGORIES SETUP
-
 require __DIR__ . '/db.php';
 // before continuing, load and run code from db.php
 // DIR is the directory to find db.php
@@ -18,6 +17,9 @@ $sql = 'SELECT
           recipes.description,
           recipes.servings,
           recipes.prep_time,
+          recipes.slug,
+          recipes.subtitle,
+          recipes.main_image,
           categories.name AS category
         FROM recipes
         INNER JOIN categories
@@ -34,14 +36,16 @@ $sql = 'SELECT
 
 
 
-$result = mysqli_query($conn, $sql);
 
+$result = mysqli_query($conn, $sql);
 $database_recipes = mysqli_fetch_all($result, MYSQLI_ASSOC);
 // takes dtabase results and turns into PHP array
 // fetch all rows that come back
 // organize each row using database column names
-
 function get_input(string $input_name): string {
+
+
+
 
 
 //  GET & POST 
@@ -58,7 +62,23 @@ function post_input(string $input_name): string {
 function escape_html(string $text_to_escape): string {
   return htmlspecialchars($text_to_escape, ENT_QUOTES, 'UTF-8');
 } // converts HTML characters into solid safe text
-  // ai assisted set up
+
+
+
+
+
+// FILTRATION LINKS ACTUALLY FILTER THE RECIPES
+$selected_category = get_input('category');
+
+if ($selected_category !== '') {
+  $database_recipes = array_filter(
+    $database_recipes,
+    function ($recipe) use ($selected_category) {
+      return $recipe['category'] === $selected_category;
+    }
+  );
+}
+
 
 
 
@@ -67,33 +87,16 @@ $food_searched_in_bar = get_input('recipe_search');
 $recipes_that_match = []; 
 // sets user's search as variable $food_searched_in_bar
 // empty array, matching recipes stored here
-
-
-
-$all_recipes = [ // array of all recipes
-  'rice',
-  'rice and chicken',
-  'rice and beef',
-  'apple',
-  'yogurt',
-  'banana',
-  'baked potato',
-  'mashed potato',
-  'potato french fries',
-]; 
-
-
-
 if ($food_searched_in_bar !== '') { //user actually types something 
-  foreach ($all_recipes as $an_examined_recipe) { 
+  foreach ($database_recipes as $an_examined_recipe) {
     if (str_contains(
       // temporarily converts everything to lowercase
-      strtolower($an_examined_recipe), 
+      strtolower($an_examined_recipe['title']),
       strtolower($food_searched_in_bar)
       )) {
       // only runs when there's a match
       // loop through all recipes and check if given recipe contain words in searchbar
-      $recipes_that_match[] = $an_examined_recipe;
+      $recipes_that_match[] = $an_examined_recipe['title'];
     }
   }
 }
@@ -106,6 +109,7 @@ $submitted_email = '';
 $validation_errors = [];
 $submission_successful = false;
 // default empty/false for everything 
+
 
 
 
@@ -133,6 +137,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
 
+
 <!--PHP SET UP ASSIGNMENT WEEK 2-->
 <!DOCTYPE html>
 <html lang="en">
@@ -148,10 +153,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <h1>UXID 241 Cookbook</h1>
 
-
-  
 <!--SEED DATA RECIPES DISPLAYED -->
 <h2>Recipes from Database:</h2>
+
+
+<!--AI ASSISTED FILTRATION CODE -->
+<!--Promppt: Please show me how to set up the initial filtration button system based off of chicken, beef, vegetarian, fish & seafood, pork, and turkey categories in my php admin -->
+<div class="category-filters">
+  <a href="index.php">All</a>
+  <a href="index.php?category=Chicken">Chicken</a>
+  <a href="index.php?category=Beef">Beef</a>
+  <a href="index.php?category=Vegetarian">Vegetarian</a>
+  <a href="index.php?category=Fish%20%26%20Seafood">Fish &amp; Seafood</a>
+  <a href="index.php?category=Pork">Pork</a>
+  <a href="index.php?category=Turkey">Turkey</a>
+</div>
+
 
 <!-- WEEK 4 DUE WEEK 5 - RECIPES READ FROM MYSQL DATABASE -->
 <?php foreach ($database_recipes as $recipe) : ?>
