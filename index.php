@@ -20,6 +20,16 @@ $sql = 'SELECT
           recipes.slug,
           recipes.subtitle,
           recipes.main_image,
+          recipes.ingredient_1,
+          recipes.ingredient_2,
+          recipes.ingredient_3,
+          recipes.ingredient_4,
+          recipes.ingredient_5,
+          recipes.ingredient_6,
+          recipes.ingredient_7,
+          recipes.ingredient_8,
+          recipes.ingredient_9,
+          recipes.ingredient_10,
           categories.name AS category
         FROM recipes
         INNER JOIN categories
@@ -82,23 +92,45 @@ if ($selected_category !== '') {
 
 
 
-
+// AI ASSISTED CODE: 
+// Prompt: Seearchbar results should show up in the cards results, instead of being displayed in. separate list. So if someone searches a thing, the filters all go blank, and it comes back with the items in the searchbar in the cards. How do I do this?
+// Promt 2: When I search a filter item like beef, i only get 2 items back instead of 6. How do i broaden this and have my search give me the same filter results?
 // FOOD SEARCHED IN SEARCHBAR 
-$recipes_that_match = []; 
-// sets user's search as variable $food_searched_in_bar
-// empty array, matching recipes stored here
-if ($food_searched_in_bar !== '') { //user actually types something 
-  foreach ($database_recipes as $an_examined_recipe) {
-    if (str_contains(
-      // temporarily converts everything to lowercase
-      strtolower($an_examined_recipe['title']),
-      strtolower($food_searched_in_bar)
-      )) {
-      // only runs when there's a match
-      // loop through all recipes and check if given recipe contain words in searchbar
-      $recipes_that_match[] = $an_examined_recipe['title'];
+if ($food_searched_in_bar !== '') {
+
+  // SEARCHING CLEARS FILTER BUTTONS SO THEY DON'T INTERFERE
+  $selected_categories = [];
+
+  $database_recipes = array_filter(
+    $database_recipes,
+    function ($recipe) use ($food_searched_in_bar) {
+
+      $search_term = strtolower($food_searched_in_bar);
+
+      // SEARCHED WORD SEARCHES RECIPE TITLE AND CATEGORY
+      if (
+        str_contains(strtolower($recipe['title']), $search_term) ||
+        str_contains(strtolower($recipe['category']), $search_term)
+      ) {
+        return true;
+      }
+
+      // SEARCHED WORD SEARCHES ALL 10 INGREDIENTS 
+      for ($i = 1; $i <= 10; $i++) {
+
+        $ingredient = $recipe['ingredient_' . $i] ?? '';
+
+        if (
+          $ingredient !== '' &&
+          str_contains(strtolower($ingredient), $search_term)
+        ) {
+          return true;
+        }
+      }
+
+      return false;
     }
-  }
+  );
 }
 
 
@@ -142,22 +174,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<link rel="stylesheet" href="style.css?v=3">
+<link rel="stylesheet" href="style.css?v=5">
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>UXID 241 Cookbook</title>
 </head>
 <body>
 
+<!--LOG IN BUTTON -->
+<a href="login.php" class="login-button">Log In</a>
+
 <main class="main-container">
 
 
 
-<h1>UXID 241 Cookbook</h1>
 
-
-
-<h2>Search for a food:</h2>
+<!-- HTML STARTS HERE -->
+<h1>Uxid 241 Cookbook</h1>
 
 <form action="index.php" method="GET">
 
@@ -167,10 +200,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       name="category"
       value="<?= escape_html($selected_category); ?>">
   <?php endif; ?>
+
+
+
+
   <!--sends data to this file's server + appends search to URL-->
-  <label for="recipe_search">Recipe name has:</label>
-  <!--creates form with x icon-->
+  <label for="recipe_search"><h2>Search for a food:<h2></label>
+  <!--creates form-->
     
+
+
+<!-- HITTING SEARCH BUTTON -->
   <input
   type="search" 
   id="recipe_search"
@@ -180,30 +220,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <button type="submit">Search</button> </form> 
   
 
-    <!--ai assisted conversion of special characters to safe neutral code-->
-    <?php if ($food_searched_in_bar !== '') : ?> 
-    <!--submission can't be blank-->
-    <p><?= count($recipes_that_match); ?> result(s) for 
-    "<?= escape_html($food_searched_in_bar); ?>"</p>
-    <!--count results for their search. all "chicken" recipes will return-->
-  
-    <ul><?php foreach ($recipes_that_match as $an_examined_recipe) : ?>
-      <li><?= escape_html($an_examined_recipe); ?></li>
-      <!--list every item that matched-->
-      <?php endforeach; ?></ul>
-  <?php endif; ?>
 
 
 
 
+<!--NUMBER OF HOW MANY RECIPES MATCH YOUR SEARCH -->
+<h2>&diams; <?= count($database_recipes); ?>  Recipes Match Your Search &diams; </h2>
+<br><br><br>
 
-<!--SEED DATA RECIPES DISPLAYED -->
-<h2><?= count($database_recipes); ?> Recipes Match Your Search</h2>
+
+
+
 
 <!--AI ASSISTED FILTRATION CODE -->
 <!--Promppt: Please show me how to set up the initial filtration button system based off of chicken, beef, vegetarian, fish & seafood, pork, and turkey categories in my php admin -->
 <!--Second Promppt: Show me how to visually indicate the current filter in use, working with CSS. -->
-
 <div class="category-filters">
 
   <a
@@ -255,7 +286,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
 
-
 <div class="recipe-grid">
 <!-- WEEK 4 DUE WEEK 5 - RECIPES READ FROM MYSQL DATABASE -->
 <?php foreach ($database_recipes as $recipe) : ?>
@@ -264,67 +294,56 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
 
-<!-- DISPLAYING ARRAY DB INFORMATION -->
+<!-- DISPLAYING RECIPE CARDS -->
+  <a href="recipe.php?id=<?= (int) $recipe['id']; ?>">
   <article class="recipe-card">
 
 
-<!-- RECIPE IMAGES -->
+
+<!-- RECIPE CARD IMAGE -->
   <?php if (!empty($recipe['main_image'])) : ?>
-  
     <img
     src="<?= escape_html($recipe['main_image']); ?>"
     alt="<?= escape_html($recipe['title']); ?>">
-
-    
   <?php endif; ?>
 
 
-  
 
-
-<!-- CLICKABLE LINKS -->
+<!-- SHOW CLICKABLE RECIPE CARD TITLE LINK -->
     <h3>
-    <a href="recipe.php?id=<?= (int) $recipe['id']; ?>">
     <?= escape_html($recipe['title']); ?>
-    </a>
     </h3>
 
 
-<!-- SUBTITLE -->
+<!-- SHOW RECIPE CARD SUBTITLE -->
     <?php if (!empty($recipe['subtitle'])) : ?>
     <p><?= escape_html($recipe['subtitle']); ?></p>
     <?php endif; ?>
 
 
 
-   <!-- RECIPE INFO CARD -->
- 
-<div class="recipe-info">
-  <span class="recipe-category">
-    <?= escape_html($recipe['category']); ?>
-  </span>
+   <!-- SHOW RECIPE CATEGORY AND SERVINGS  -->
+    <div class="recipe-info">
+      <span class="recipe-category">
+      <?= escape_html($recipe['category']); ?>
+      </span>
 
-  <span class="recipe-servings">
-    <?= escape_html((string) $recipe['servings']); ?> servings
-  </span>
-</div>
-
+      <span class="recipe-servings">
+      <?= escape_html((string) $recipe['servings']); ?> servings
+      </span>
+    </div>
   </article>
-<?php endforeach; ?>
-</div>
-
+  
+  </a>
+  <?php endforeach; ?>
+  </div>
 
 
   <br>
-
-
-
-
-
-
   <br>
       
 
+  <!-- SUBMIT YOUR RECIPE FORM  -->
 
   <h2>Submit your recipe:</h2>
   <?php if (!empty($validation_errors)) : ?> 
