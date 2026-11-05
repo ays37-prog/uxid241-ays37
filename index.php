@@ -2,6 +2,9 @@
 declare(strict_types=1); 
 // strict about type of information accepted
 
+session_start();
+
+
 
 
 // WEEK 4 DUE WEEK 5 CATEGORIES SETUP
@@ -181,12 +184,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 <body>
 
+
+
+
+
 <!--LOG IN BUTTON -->
-<a href="login.php" class="login-button">Log In</a>
+<?php if (isset($_SESSION['user_id'])) : ?>
+  <a href="admin.php" class="round-button">Admin</a>
+
+<?php else : ?>
+<a href="login.php" class="round-button">Log In</a>
+<?php endif; ?>
+
+
+
+
 
 <main class="main-container">
-
-
 
 
 <!-- HTML STARTS HERE -->
@@ -212,17 +226,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <!-- HITTING SEARCH BUTTON -->
   <input
+  class="form-input"
   type="search" 
   id="recipe_search"
   name="recipe_search"
   value="<?= escape_html($food_searched_in_bar); ?>">
   <!--keep in searchbar upon page reloading-->
-  <button type="submit">Search</button> </form> 
-  
+  <button type="submit" class="dark-button">Search</button>
 
 
-
-
+</form> 
 
 <!--NUMBER OF HOW MANY RECIPES MATCH YOUR SEARCH -->
 <h2>&diams; <?= count($database_recipes); ?>  Recipes Match Your Search &diams; </h2>
@@ -397,6 +410,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
     <button type="submit">Submit your recipe</button> </form>
+    
     </main>
 </body>
 </html>

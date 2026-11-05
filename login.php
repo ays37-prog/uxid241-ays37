@@ -9,6 +9,11 @@ require __DIR__ . '/db.php';
 
 
 
+// AI ASSISTED CODE:
+// Prompt: Help me create a PHP login system that looks up a user
+// with a prepared statement, verifies their password using password_verify(),
+// and begins a session.
+
 $login_error = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -66,8 +71,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   }
 
 
-  
-  $login_error = 'Invalid email or password.';
+
+  $login_error = 'Email or password is inccorrect';
 }
 ?>
 
@@ -87,23 +92,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
 <body>
+    <a href="index.php" class="round-button">←  Back to Recipes</a>
+
   <main class="login-page">
-    <a href="index.php">← Back to Recipes</a>
 
 
     <h1>Log In</h1>
+
+
+
+
+<?php if ($login_error !== '') : ?>
+
+  <p class="login-error">
+    <?= htmlspecialchars(
+      $login_error,
+      ENT_QUOTES,
+      'UTF-8'
+    ); ?>
+  </p>
+
+<?php endif; ?>
+    <!-- invalid email or password message -->
 
 
     <form action="login.php" method="POST">
     <!-- sends the information back to login.php-->
     <!-- send the submitted information inside the http request rather than putting it in the URL -->
 
-
-
-
-
-      <label for="email">Email</label>
+      <label for="email"><h2>Email</h2></label>
       <input
+        class="form-input"
         type="email"
         id="email"
         name="email"
@@ -112,15 +131,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
 
-
-      <label for="password">Password</label>
+      <label for="password"><h2>Password</h2></label>
       <input
+        class="form-input"
         type="password"
         id="password"
         name="password"
         required>
 
-      <button type="submit">Log In</button>
+        <br>
+
+      <button type="submit" class="dark-button">Log In Now</button>
       <!-- sends email and pw to login.php with POST -->
 
 

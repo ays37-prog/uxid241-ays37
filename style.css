@@ -46,6 +46,8 @@ body {
 }
 
 
+
+
 h1 {
     margin-top: 0px;
     margin-bottom: 50px;
@@ -199,7 +201,7 @@ form[method="GET"] {
     margin-bottom: 30px;
 }
 
-form[method="GET"] input[type="search"] {
+.form-input {
     width: 350px;
     max-width: 100%;
     padding: 12px 16px;
@@ -208,16 +210,21 @@ form[method="GET"] input[type="search"] {
     font-size: 16px;
 }
 
-form[method="GET"] button {
+.dark-button {
     padding: 12px 20px;
     border: 1px solid #222;
     border-radius: 8px;
     background: #222;
     color: white;
     cursor: pointer;
+    transition: 0.4s ease;
 }
 
 
+.dark-button:hover {
+    box-shadow: 0 10px 20px rgba(255, 248, 191, 0.742); 
+    transform: translateY(-2px);
+}
 
 
 
@@ -375,23 +382,34 @@ form[method="GET"] button {
 }
 
 
-/* LOG IN BUTTON */
-.login-button {
-    display: block;
+/* BLACK ROUND BUTTON */
+.round-button {
+    display: inline-block;
     width: fit-content;
-    margin-left: auto;
-    margin-bottom: 80px;
     padding: 10px 18px;
     background-color: #222;
     color: white;
     text-decoration: none;
+    border: none;
     border-radius: 100px;
+    cursor: pointer;
     transition: 0.4s ease;
 }
 
-.login-button:hover {
-    background-color: #222;
-    color: white;
+.round-button:hover {
     box-shadow: 0 10px 20px rgba(255, 248, 191, 0.742); 
     transform: translateY(-2px);
+}
+
+.login-page {
+    max-width: 600px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.login-page form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
 }

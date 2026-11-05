@@ -22,18 +22,19 @@ if (!isset($_SESSION['user_id'])) {
 <body>
 
   <main>
+        <a href="logout.php" class="round-button">Log Out Now</a>
+
 
     <h1>Admin Panel</h1>
 
-    <p>
+    <h2>
       Welcome back
       <?= htmlspecialchars(
         $_SESSION['user_email'],
         ENT_QUOTES,
         'UTF-8'
       ); ?>
-    </p>
-
+    </h2>
   </main>
 
 </body>
