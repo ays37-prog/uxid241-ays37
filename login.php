@@ -22,7 +22,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $password = $_POST['password'] ?? '';
 
 
-
   // PREPARED STATEMENT FINDS USER BY EMAIL
   $statement = mysqli_prepare(
     $conn,
@@ -30,7 +29,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
      FROM users
      WHERE email = ?'
   );
-
 
 
   mysqli_stmt_bind_param(
@@ -60,11 +58,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     session_regenerate_id(true);
 
 
-
     $_SESSION['user_id'] = (int) $user['id'];
     $_SESSION['user_email'] = $user['email'];
-
-
 
     header('Location: admin.php');
     exit;
@@ -75,7 +70,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $login_error = 'Email or password is inccorrect';
 }
 ?>
-
 
 
 

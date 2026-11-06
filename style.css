@@ -196,10 +196,12 @@ h3 {
 
 form[method="GET"] {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     gap: 10px;
     margin-bottom: 30px;
 }
+
 
 .form-input {
     width: 350px;

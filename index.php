@@ -206,6 +206,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <!-- HTML STARTS HERE -->
 <h1>Uxid 241 Cookbook</h1>
 
+
+
+
+
+
 <form action="index.php" method="GET">
 
   <?php if ($selected_category !== '') : ?>
@@ -216,15 +221,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <?php endif; ?>
 
 
-
-
   <!--sends data to this file's server + appends search to URL-->
   <label for="recipe_search"><h2>Search for a food:<h2></label>
-  <!--creates form-->
-    
-
-
-<!-- HITTING SEARCH BUTTON -->
+  <!-- HITTING SEARCH BUTTON -->
   <input
   class="form-input"
   type="search" 
@@ -233,9 +232,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   value="<?= escape_html($food_searched_in_bar); ?>">
   <!--keep in searchbar upon page reloading-->
   <button type="submit" class="dark-button">Search</button>
-
-
 </form> 
+
+
+
+
+
+
+
 
 <!--NUMBER OF HOW MANY RECIPES MATCH YOUR SEARCH -->
 <h2>&diams; <?= count($database_recipes); ?>  Recipes Match Your Search &diams; </h2>
