@@ -10,8 +10,74 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 require __DIR__ . '/db.php';
+// kick out non userws from this page
+
+
+
+
+// AI-assisted code:
+// PROMPT: using a prepared statement, set up this form so 
+// that it correctly validates the user input and adds a 
+// new recipe properly from the given form fields. 
+
+$errors = [];
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+  $title = trim($_POST['title'] ?? '');
+  $description = trim($_POST['description'] ?? '');
+  $servings = (int) ($_POST['servings'] ?? 0);
+  $category_id = (int) ($_POST['category_id'] ?? 0);
+
+  // SERVER-SIDE VALIDATION
+  if ($title === '') {
+    $errors[] = 'Recipe title is required.';
+  }
+
+  if ($description === '') {
+    $errors[] = 'Description is required.';
+  }
+
+  if ($servings < 1) {
+    $errors[] = 'Servings must be at least 1.';
+  }
+
+  if ($category_id < 1) {
+    $errors[] = 'Please choose a category.';
+  }
+
+  // ONLY INSERT IF VALID
+  if (empty($errors)) {
+
+    $statement = mysqli_prepare(
+      $conn,
+      'INSERT INTO recipes
+        (title, description, servings, category_id)
+       VALUES (?, ?, ?, ?)'
+    );
+
+    mysqli_stmt_bind_param(
+      $statement,
+      'ssii',
+      $title,
+      $description,
+      $servings,
+      $category_id
+    );
+
+    mysqli_stmt_execute($statement);
+
+    header('Location: index.php');
+    exit;
+  }
+}
+
 ?>
-<!--kick out non admin from this page-->
+
+
+
+
+
 
 
 <!DOCTYPE html>

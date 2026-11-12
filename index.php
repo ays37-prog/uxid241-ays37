@@ -356,64 +356,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   </div>
 
 
-  <br>
-  <br>
-      
-
-  <!-- SUBMIT YOUR RECIPE FORM  -->
-
-  <h2>Submit your recipe:</h2>
-  <?php if (!empty($validation_errors)) : ?> 
-  <!--are any error messages stored in $-->
-
-  <!--if errors exist, open bulleted list-->
-  <ul><?php foreach ($validation_errors as $current_error) : ?>
-    <li><?= escape_html($current_error); ?></li>
-    <!--list all errors in bullets-->
-    <?php endforeach; ?></ul>
-    <?php endif; ?>
-    <!--escape_html blocks malicious code-->
-
-
-
-  <!--SUBMISSION WORKS-->
-  <?php if ($submission_successful) : ?>
-    <p>Recipe submitted successfully!</p>
-    <p>Recipe: <?= escape_html($submitted_recipe_name); ?></p>
-    <!--prints submitted recipe name safely preventing cross site scripting-->
-    <p>Email: <?= escape_html($submitted_email); ?></p>
-    <!--also prints safe email-->
-  <?php endif; ?>
-
-
-
-  <!--SUBMIT A RECIPE FORM-->
-  <form action="index.php" method="POST">
-  <!--sends data to this file's server + doesn't append to URL-->
-
-    <label for="name">Recipe Name:</label>
-    <input
-      type="text"
-      id="name"
-      name="name"
-      value="<?= escape_html($submitted_recipe_name); ?>">
-
-
-      <br><br>
-
-
-    <label for="email">Your Email:</label>
-    <input
-      type="email"
-      id="email"
-      name="email"
-      value="<?= escape_html($submitted_email); ?>">
-
-
-      <br><br>
-
-
-    <button type="submit">Submit your recipe</button> </form>
     
     </main>
 </body>
