@@ -79,7 +79,7 @@ function escape_html(string $text): string {
 
 
 <!-- BACK BUTTON -->
-<a href="index.php" class="back-button">← Back to Recipes</a>
+  <a href="index.php" class="round-button">Back to Recipes</a>
 
 
 

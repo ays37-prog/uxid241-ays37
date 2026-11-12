@@ -13,6 +13,26 @@ require __DIR__ . '/db.php';
 // DIR is the directory to find db.php
 
 
+function get_input(string $input_name): string {
+//  GET & POST 
+  return trim($_GET[$input_name] ?? '');
+} // GET what user entered, trim spaces, returns cleaned text
+
+
+  // if it does not exist, use an empty string instead
+function post_input(string $input_name): string {
+  return trim($_POST[$input_name] ?? '');
+} // gets what user entered, trims spaces, returns clean text
+
+
+function escape_html(string $text_to_escape): string {
+  return htmlspecialchars($text_to_escape, ENT_QUOTES, 'UTF-8');
+} // converts HTML characters into solid safe text
+
+
+$food_searched_in_bar = get_input('recipe_search');
+$selected_category = get_input('category');
+
 
 $sql = 'SELECT
           recipes.id,
@@ -50,40 +70,59 @@ $sql = 'SELECT
 
 
 
-$result = mysqli_query($conn, $sql);
+
+
+// AI-assisted: search the database safely with a prepared LIKE statement.
+if ($food_searched_in_bar !== '') {
+  $search_term = '%' . $food_searched_in_bar . '%';
+  $search_sql = 'SELECT
+                  recipes.id,
+                  recipes.title,
+                  recipes.description,
+                  recipes.servings,
+                  recipes.prep_time,
+                  recipes.slug,
+                  recipes.subtitle,
+                  recipes.main_image,
+                  recipes.ingredient_1,
+                  recipes.ingredient_2,
+                  recipes.ingredient_3,
+                  recipes.ingredient_4,
+                  recipes.ingredient_5,
+                  recipes.ingredient_6,
+                  recipes.ingredient_7,
+                  recipes.ingredient_8,
+                  recipes.ingredient_9,
+                  recipes.ingredient_10,
+                  categories.name AS category
+                FROM recipes
+                INNER JOIN categories
+                  ON recipes.category_id = categories.id
+                WHERE recipes.title LIKE ?
+                   OR recipes.description LIKE ?
+                   OR categories.name LIKE ?
+                ORDER BY recipes.title';
+
+
+  $result = mysqli_execute_query(
+    $conn,
+    $search_sql,
+    [$search_term, $search_term, $search_term]
+  );
+
+} else {
+  $result = mysqli_query($conn, $sql);
+}
+
+
 $database_recipes = mysqli_fetch_all($result, MYSQLI_ASSOC);
 // takes dtabase results and turns into PHP array
 // fetch all rows that come back
 // organize each row using database column names
-function get_input(string $input_name): string {
-
-
-
-
-
-//  GET & POST 
-  return trim($_GET[$input_name] ?? '');
-} // GET what user entered, trim spaces, returns cleaned text
-
-
-  // if it does not exist, use an empty string instead
-function post_input(string $input_name): string {
-  return trim($_POST[$input_name] ?? '');
-} // gets what user entered, trims spaces, returns clean text
-
-
-function escape_html(string $text_to_escape): string {
-  return htmlspecialchars($text_to_escape, ENT_QUOTES, 'UTF-8');
-} // converts HTML characters into solid safe text
-
-
 
 
 
 // FILTRATION LINKS ACTUALLY FILTER THE RECIPES
-$selected_category = get_input('category');
-$food_searched_in_bar = get_input('recipe_search');
-
 if ($selected_category !== '') {
   $database_recipes = array_filter(
     $database_recipes,
@@ -92,84 +131,7 @@ if ($selected_category !== '') {
     }
   );
 }
-
-
-
-// AI ASSISTED CODE: 
-// Prompt: Seearchbar results should show up in the cards results, instead of being displayed in. separate list. So if someone searches a thing, the filters all go blank, and it comes back with the items in the searchbar in the cards. How do I do this?
-// Promt 2: When I search a filter item like beef, i only get 2 items back instead of 6. How do i broaden this and have my search give me the same filter results?
-// FOOD SEARCHED IN SEARCHBAR 
-if ($food_searched_in_bar !== '') {
-
-  // SEARCHING CLEARS FILTER BUTTONS SO THEY DON'T INTERFERE
-  $selected_categories = [];
-
-  $database_recipes = array_filter(
-    $database_recipes,
-    function ($recipe) use ($food_searched_in_bar) {
-
-      $search_term = strtolower($food_searched_in_bar);
-
-      // SEARCHED WORD SEARCHES RECIPE TITLE AND CATEGORY
-      if (
-        str_contains(strtolower($recipe['title']), $search_term) ||
-        str_contains(strtolower($recipe['category']), $search_term)
-      ) {
-        return true;
-      }
-
-      // SEARCHED WORD SEARCHES ALL 10 INGREDIENTS 
-      for ($i = 1; $i <= 10; $i++) {
-
-        $ingredient = $recipe['ingredient_' . $i] ?? '';
-
-        if (
-          $ingredient !== '' &&
-          str_contains(strtolower($ingredient), $search_term)
-        ) {
-          return true;
-        }
-      }
-
-      return false;
-    }
-  );
-}
-
-
-
-// SUBMITTING A RECIPE 
-$submitted_recipe_name = '';
-$submitted_email = '';
-$validation_errors = [];
-$submission_successful = false;
-// default empty/false for everything 
-
-
-
-
-//SERVER SIDE VALIDATION
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-  // if user submits the POST recipe form then
-  $submitted_recipe_name = post_input('name');
-  $submitted_email = post_input('email');
-  // store corresponding values in each varible
-
-
-
-// VALIDATING SUBMITTED RECIPES
-  if ($submitted_recipe_name === '') { //submission can't be blank
-    $validation_errors[] = 'Recipe name is required.';
-  }
-  if (!filter_var($submitted_email, FILTER_VALIDATE_EMAIL)) {
-    $validation_errors[] = 'Please enter a valid email address.';
-  }
-  if (empty($validation_errors)) {
-    $submission_successful = true;
-  }
-}
 ?>
-
 
 
 
@@ -177,7 +139,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<link rel="stylesheet" href="style.css?v=5">
+<link rel="stylesheet" href="style.css?v=6">
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>UXID 241 Cookbook</title>
@@ -186,52 +148,43 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
 
-
-
-<!--LOG IN BUTTON -->
+<!--log in OR admin button at top left -->
 <?php if (isset($_SESSION['user_id'])) : ?>
   <a href="admin.php" class="round-button">Admin</a>
 
 <?php else : ?>
-<a href="login.php" class="round-button">Log In</a>
+  <a href="login.php" class="round-button">Log In</a>
+
 <?php endif; ?>
 
 
 
-
-
 <main class="main-container">
-
-
-<!-- HTML STARTS HERE -->
 <h1>Uxid 241 Cookbook</h1>
 
 
 
-
-
-
+<!-- recipe serchbar built here-->
 <form action="index.php" method="GET">
-
-  <?php if ($selected_category !== '') : ?>
+    <!-- gets all recipes that match and appends to URL-->
+    <?php if ($selected_category !== '') : ?>
     <input
       type="hidden"
       name="category"
       value="<?= escape_html($selected_category); ?>">
-  <?php endif; ?>
+    <?php endif; ?>
+    <label for="recipe_search"><h2>Search for a food:<h2></label>
 
+    <!-- search button itself -->
+    <input
+    class="form-input"
+    type="search" 
+    id="recipe_search"
+    name="recipe_search"
+    value="<?= escape_html($food_searched_in_bar); ?>">
+    <!--keep in searchbar upon page reloading-->
 
-  <!--sends data to this file's server + appends search to URL-->
-  <label for="recipe_search"><h2>Search for a food:<h2></label>
-  <!-- HITTING SEARCH BUTTON -->
-  <input
-  class="form-input"
-  type="search" 
-  id="recipe_search"
-  name="recipe_search"
-  value="<?= escape_html($food_searched_in_bar); ?>">
-  <!--keep in searchbar upon page reloading-->
-  <button type="submit" class="dark-button">Search</button>
+    <button type="submit" class="dark-button">Search</button>
 </form> 
 
 
@@ -244,7 +197,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <!--NUMBER OF HOW MANY RECIPES MATCH YOUR SEARCH -->
 <h2>&diams; <?= count($database_recipes); ?>  Recipes Match Your Search &diams; </h2>
 <br><br><br>
-
 
 
 
@@ -295,56 +247,43 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     class="<?= $selected_category === 'Turkey' ? 'active' : ''; ?>">
     Turkey
   </a>
-
 </div>
 
 
 
-
-
-
+<!-- AI assisted code:-->
+ <!-- prompt: setup a recipe card grid display 
+  in which each recipe card contains its name, 
+  subtitle, category, and serving size. Set it up in such 
+  a way I can adjust the layout in css later-->
 <div class="recipe-grid">
-<!-- WEEK 4 DUE WEEK 5 - RECIPES READ FROM MYSQL DATABASE -->
 <?php foreach ($database_recipes as $recipe) : ?>
   <!-- loop through each recipe returned from the database. -->
   <!-- 1st ancho-orange chicken db row, 2nd beef medallions db row, 3rd broccoli & pesto sw db row -->
 
 
 
-<!-- DISPLAYING RECIPE CARDS -->
+<!-- RECIPE CARDS -->
   <a href="recipe.php?id=<?= (int) $recipe['id']; ?>">
   <article class="recipe-card">
-
-
-
-<!-- RECIPE CARD IMAGE -->
+<!-- RECIPE IMAGE -->
   <?php if (!empty($recipe['main_image'])) : ?>
     <img
     src="<?= escape_html($recipe['main_image']); ?>"
     alt="<?= escape_html($recipe['title']); ?>">
   <?php endif; ?>
-
-
-
-<!-- SHOW CLICKABLE RECIPE CARD TITLE LINK -->
-    <h3>
-    <?= escape_html($recipe['title']); ?>
-    </h3>
-
-
-<!-- SHOW RECIPE CARD SUBTITLE -->
+<!-- RECIPE TITLE -->
+  <h3><?= escape_html($recipe['title']); ?></h3>
+<!-- RECIPE  SUBTITLE -->
     <?php if (!empty($recipe['subtitle'])) : ?>
     <p><?= escape_html($recipe['subtitle']); ?></p>
     <?php endif; ?>
-
-
-
-   <!-- SHOW RECIPE CATEGORY AND SERVINGS  -->
+<!--CATEGORY -->
     <div class="recipe-info">
       <span class="recipe-category">
       <?= escape_html($recipe['category']); ?>
       </span>
-
+<!--SEVINGS -->
       <span class="recipe-servings">
       <?= escape_html((string) $recipe['servings']); ?> servings
       </span>
@@ -356,7 +295,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   </div>
 
 
-    
-    </main>
+</main>
 </body>
 </html>

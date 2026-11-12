@@ -23,8 +23,8 @@ All AI-generated code in this project will be cited inline, according to the cou
 
 Week 2 set up: I used ChatGPT Pro to help me understand the project setup instructions, configure MAMP, and set up my PHP structure. This portion of code may not exist anymore upon further development throughout weekly projects.
 
-Week 4 set up: I used ChatGPT to assist in setting up my schema.sql file to import seed data in phpMyAdmin, setting up my recipe categories and id, title, description, servings, prep time, category id, and date created. (OUTDATED)
+Week 6: I used ChatGPT to assist in setting up the recipe category filtration system so that users are able to click on the individual category buttons and see the correct subsequent recipes below, whilst still searching in the search bar. 
 
-Week 6: I used ChatGPT to assist in setting up the recipe category filtrtion system so that users are able to click on the individual category buttons and see the correct subsequent recipes below, whilst still searching in the search bar. 
+Week 7: I used ChatGPT to assist in fostering a secure admin session upon email and password authentication. Only the right email and password lets users enter the admin panel if they put in the valid credentials.
 
-Week 7: I used ChatGPT to assist in setting up authentication and logins that only let users enter the admin panel if they put in a valid email with the matching password which ahs been encrypted. 
+Week 8: I used ChatGPT to assist in secure CRUD functionalities that enable users to create, read, update, and delete recipes. Some actions are carried out from form input, while others are through buttons. 
