@@ -1,8 +1,7 @@
 <?php
-
 declare(strict_types=1);
-
 session_start();
+
 
 if (!isset($_SESSION['user_id'])) {
   header('Location: login.php');
@@ -14,12 +13,10 @@ require __DIR__ . '/db.php';
 
 
 
-
 // AI-assisted code:
 // PROMPT: using a prepared statement, set up this form so 
 // that it correctly validates the user input and adds a 
 // new recipe properly from the given form fields. 
-
 $errors = [];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -29,24 +26,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $servings = (int) ($_POST['servings'] ?? 0);
   $category_id = (int) ($_POST['category_id'] ?? 0);
 
-  // SERVER-SIDE VALIDATION
+  
   if ($title === '') {
     $errors[] = 'Recipe title is required.';
   }
-
   if ($description === '') {
     $errors[] = 'Description is required.';
   }
-
   if ($servings < 1) {
     $errors[] = 'Servings must be at least 1.';
   }
-
   if ($category_id < 1) {
     $errors[] = 'Please choose a category.';
   }
 
-  // ONLY INSERT IF VALID
+
+  // only insert if valid
   if (empty($errors)) {
 
     $statement = mysqli_prepare(
@@ -71,7 +66,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     exit;
   }
 }
-
 ?>
 
 

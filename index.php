@@ -4,10 +4,6 @@ declare(strict_types=1);
 
 session_start();
 
-
-
-
-// WEEK 4 DUE WEEK 5 CATEGORIES SETUP
 require __DIR__ . '/db.php';
 // before continuing, load and run code from db.php
 // DIR is the directory to find db.php
