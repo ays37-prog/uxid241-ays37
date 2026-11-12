@@ -59,7 +59,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
     $_SESSION['user_id'] = (int) $user['id'];
-    $_SESSION['user_email'] = $user['email'];
 
     header('Location: admin.php');
     exit;
@@ -67,8 +66,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
 
-  $login_error = 'Email or password is inccorrect';
-}
+$login_error = 'Invalid email or password';}
 ?>
 
 

@@ -28,10 +28,13 @@ if (!isset($_SESSION['user_id'])) {
     <h1>Admin Panel</h1>
     
 
-    <h2>Welcome back <?= htmlspecialchars($_SESSION['user_email'],ENT_QUOTES,'UTF-8'); ?></h2>
+    <h2>Welcome back</h2>
 
   
 <div class="centered-container">
+    <br>
+      <a href="create_recipe.php" class="round-button">Add New Recipe</a>
+    <br>
     <br>
     <a href="index.php" class="round-button">Continue to Cookbook</a>
 </div>
