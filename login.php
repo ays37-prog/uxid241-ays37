@@ -79,7 +79,7 @@ $login_error = 'Invalid email or password';}
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Log In | UXID 241 Cookbook</title>
-  <link rel="stylesheet" href="style.css?v=5">
+  <link rel="stylesheet" href="style.css?v=99">
 </head>
 
 
@@ -135,9 +135,13 @@ $login_error = 'Invalid email or password';}
 
       <button type="submit" class="dark-button">Log In Now</button>
       <!-- sends email and pw to login.php with POST -->
-
-
     </form>
+
+
+    <br><br><br>
+<a href="register.php" class="creme-button">
+  Create an Account
+</a>
 
   </main>
 

@@ -525,3 +525,20 @@ input[type="file"].form-input::file-selector-button {
     font-size: 14px;
     cursor: pointer;
 }
+
+
+.creme-button {
+    display: inline-block;
+    padding: 12px 20px;
+    border-radius: 80px;
+    background-color: #fff8e3;
+    color: black;
+    cursor: pointer;
+    transition: 0.5s ease;
+    text-decoration: none;
+}
+
+.creme-button:hover {
+    box-shadow: 0 10px 20px rgba(255, 248, 191, 0.742);
+    transform: translateY(-2px);
+}
