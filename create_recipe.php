@@ -9,7 +9,7 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 require __DIR__ . '/db.php';
-// kick out non userws from this page
+// kick out non users from this page
 
 
 
@@ -20,44 +20,56 @@ function make_safe_name(
   string $extension,
   string $folder
 ): string {
-// needs 3 pieaces of information
-// origional name like My Delicious Pasta!!.JPG
-// extention type determined by the file's real MIME type such as jpg
-// and folder we're saving to "uploads"
-// the funciton eventually returns a string
 
+// needs 3 pieces of information
+// original name like My Delicious Pasta!!.JPG
+// extension type determined by the file's real MIME type such as jpg
+// and folder we're saving to "uploads"
+// the function eventually returns a string
 
 
   $base = pathinfo($original_name, PATHINFO_FILENAME);
-//removes the oigional extension
+  // removes the original extension
+
 
   $base = strtolower($base);
-// all lowercase
+  // all lowercase
+
 
   $base = preg_replace('/[^a-z0-9]+/', '-', $base);
-// anything that isnt a-z or 0-9 is replaces by - so: my-delicious-pasta-
-  
-$base = trim($base, '-');
-// removes extra - from the beggining and end, not betwen words. still need separation.
-  
-$base = substr($base, 0, 60);
-//file name maxiumum character count is 60. will NOT take long file names
+  // anything that isn't a-z or 0-9 is replaced by -
+  // so: my-delicious-pasta-
+
+
+  $base = trim($base, '-');
+  // removes extra - from the beginning and end, not between words
+
+
+  $base = substr($base, 0, 60);
+  // file name maximum character count is 60
+
 
   if ($base === '') {
     $base = 'upload';
   }
-// if !!!.jpg --> .jpg just give it A name upload.jpg so it's not empty
+  // if !!!.jpg becomes empty, give it the name upload.jpg
+
 
   $safe_name = $base . '.' . $extension;
-// combines safe trimmed base with MIME extension
+  // combines safe trimmed base with verified MIME extension
+
 
   $counter = 1;
 
-// is there already a file with this name inside my uploads folder?
+
+  // is there already a file with this name inside my uploads folder?
   while (file_exists($folder . '/' . $safe_name)) {
+
     $safe_name = $base . '-' . $counter . '.' . $extension;
+
     $counter++;
   }
+
 
   return $safe_name;
 }
@@ -70,6 +82,7 @@ $base = substr($base, 0, 60);
 // new recipe properly from the given form fields. 
 $errors = [];
 
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
   $title = trim($_POST['title'] ?? '');
@@ -77,102 +90,146 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $servings = (int) ($_POST['servings'] ?? 0);
   $category_id = (int) ($_POST['category_id'] ?? 0);
 
-  
+
+
+  // validate regular recipe information
   if ($title === '') {
     $errors[] = 'Recipe title is required.';
   }
+
   if ($description === '') {
     $errors[] = 'Description is required.';
   }
+
   if ($servings < 1) {
     $errors[] = 'Servings must be at least 1.';
   }
+
   if ($category_id < 1) {
     $errors[] = 'Please choose a category.';
   }
 
 
 
-// check red flags in the uploaded recipe image
-$image = $_FILES['recipe_image'] ?? null;
+  // check for red flags in recipe image
+  $image = $_FILES['recipe_image'] ?? null;
 
-
-// check did image uploaded successfully
-if (
-  !$image ||
-  $image['error'] !== UPLOAD_ERR_OK
-) {
-  $errors[] = 'Please upload a recipe image.';
-}
-
-
-// size. check is image too large
-if (
-  $image &&
-  $image['error'] === UPLOAD_ERR_OK &&
-  $image['size'] > 2 * 1024 * 1024
-) {
-  $errors[] = 'The recipe image must be 2 MB or smaller.';
-}
-
-
-
-
-// check file's actual type png jpeg webp
-if (
-  $image &&
-  $image['error'] === UPLOAD_ERR_OK &&
-  $image['size'] <= 2 * 1024 * 1024
-) {
-
- // examines the actual uploaded file instead of what it looks like upfront
-  $finfo = new finfo(FILEINFO_MIME_TYPE);
-// inspect temporary file and tell what type of file its actually is
-  $mime = $finfo->file($image['tmp_name']);
-
-  $allowed_types = [
-    'image/jpeg' => 'jpg',
-    'image/png' => 'png',
-    'image/webp' => 'webp'
-  ];
-
-  if (!isset($allowed_types[$mime])) {
-    $errors[] = 'Only JPG, PNG, and WebP images are allowed.';
+  // did the image upload successfully
+  if (
+    !$image ||
+    $image['error'] !== UPLOAD_ERR_OK
+  ) {
+    $errors[] = 'Please upload a recipe image.';
   }
-}
+
+
+  // MB size check. is it too large
+  if (
+    $image &&
+    $image['error'] === UPLOAD_ERR_OK &&
+    $image['size'] > 2 * 1024 * 1024
+  ) {
+    $errors[] = 'The recipe image must be 2 MB or smaller.';
+  }
 
 
 
+  // check actual file type jpg png webp
+  if (
+    $image &&
+    $image['error'] === UPLOAD_ERR_OK &&
+    $image['size'] <= 2 * 1024 * 1024
+  ) {
+
+    // examines the actual uploaded file instead of what it looks like upfront
+    $finfo = new finfo(FILEINFO_MIME_TYPE);
+
+    // inspect temporary file and tell what type of file it actually is
+    $mime = $finfo->file($image['tmp_name']);
+
+
+    // allowlist of file types that are actually allowed
+    // also connects each real MIME type to a safe extension
+    $allowed_types = [
+      'image/jpeg' => 'jpg',
+      'image/png' => 'png',
+      'image/webp' => 'webp'
+    ];
+
+
+    if (!isset($allowed_types[$mime])) {
+      $errors[] = 'Only JPG, PNG, and WebP images are allowed.';
+    }
+  }
 
 
 
-
-
-  // only insert if valid
+  // only continue if the form and image passed all validation
   if (empty($errors)) {
 
-    $statement = mysqli_prepare(
-      $conn,
-      'INSERT INTO recipes
-        (title, description, servings, category_id)
-       VALUES (?, ?, ?, ?)'
+
+    // save the validated image and store location to uploads folder
+    $upload_folder = __DIR__ . '/uploads';
+
+
+    $extension = $allowed_types[$mime];
+    // gets trusted extension from real MIME type that was checked before
+
+
+    $safe_name = make_safe_name(
+      $image['name'],
+      $extension,
+      $upload_folder
     );
 
-    mysqli_stmt_bind_param(
-      $statement,
-      'ssii',
-      $title,
-      $description,
-      $servings,
-      $category_id
-    );
 
-    mysqli_stmt_execute($statement);
+    $target = $upload_folder . '/' . $safe_name;
+    // saves the complete final location:
+    // uploads/chicken-tacos.jpg
 
-    header('Location: index.php');
-    exit;
+
+
+    // MOVE THE FILE FROM TEMPORARY PHP LOCATION INTO REAL UPLOADS FOLDER
+    if (!move_uploaded_file($image['tmp_name'], $target)) {
+
+      $errors[] = 'Could not save the recipe image.';
+    }
+
+
+
+    // only put into database if image saved successfully
+    if (empty($errors)) {
+
+      $image_path = 'uploads/' . $safe_name;
+      // this is the image path that will be saved in MySQL
+      $statement = mysqli_prepare(
+        $conn,
+        'INSERT INTO recipes
+          (title, description, servings, category_id, main_image)
+         VALUES (?, ?, ?, ?, ?)'
+      );
+
+
+      mysqli_stmt_bind_param(
+        $statement,
+        'ssiis',
+        $title,
+        $description,
+        $servings,
+        $category_id,
+        $image_path
+      );
+
+
+      mysqli_stmt_execute($statement);
+
+      // after successfully adding recipe, return to admin page
+      header('Location: admin.php');
+      exit;
+    }
   }
 }
+
 ?>
 
 
