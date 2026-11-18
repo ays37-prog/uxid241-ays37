@@ -94,13 +94,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <h1>Add a Recipe</h1>
 
 
-    <form action="create_recipe.php" method="POST">
-      <label for="title"><h2>Recipe Title</h2></label>
-      <input
+<form
+    action="create_recipe.php"
+    method="POST"
+    enctype="multipart/form-data">
+    
+    
+    <label for="title"><h2>Recipe Title</h2></label>
+    <input
         class="form-input"
         type="text"
         id="title"
         name="title"
+        required>
+
+
+    <label for="recipe_image"><h2>Recipe Image</h2></label>
+    <input
+        class="form-input"
+        type="file"
+        id="recipe_image"
+        name="recipe_image"
+        accept=".jpg,.jpeg,.png,.webp"
         required>
 
 
