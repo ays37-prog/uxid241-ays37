@@ -13,6 +13,57 @@ require __DIR__ . '/db.php';
 
 
 
+// AI assisted code: 
+// Prompt: help me with creating a safe and unique filename for the user's uploaded image.
+function make_safe_name(
+  string $original_name,
+  string $extension,
+  string $folder
+): string {
+// needs 3 pieaces of information
+// origional name like My Delicious Pasta!!.JPG
+// extention type determined by the file's real MIME type such as jpg
+// and folder we're saving to "uploads"
+// the funciton eventually returns a string
+
+
+
+  $base = pathinfo($original_name, PATHINFO_FILENAME);
+//removes the oigional extension
+
+  $base = strtolower($base);
+// all lowercase
+
+  $base = preg_replace('/[^a-z0-9]+/', '-', $base);
+// anything that isnt a-z or 0-9 is replaces by - so: my-delicious-pasta-
+  
+$base = trim($base, '-');
+// removes extra - from the beggining and end, not betwen words. still need separation.
+  
+$base = substr($base, 0, 60);
+//file name maxiumum character count is 60. will NOT take long file names
+
+  if ($base === '') {
+    $base = 'upload';
+  }
+// if !!!.jpg --> .jpg just give it A name upload.jpg so it's not empty
+
+  $safe_name = $base . '.' . $extension;
+// combines safe trimmed base with MIME extension
+
+  $counter = 1;
+
+// is there already a file with this name inside my uploads folder?
+  while (file_exists($folder . '/' . $safe_name)) {
+    $safe_name = $base . '-' . $counter . '.' . $extension;
+    $counter++;
+  }
+
+  return $safe_name;
+}
+
+
+
 // AI-assisted code:
 // PROMPT: using a prepared statement, set up this form so 
 // that it correctly validates the user input and adds a 
