@@ -497,6 +497,31 @@ form[method="GET"] {
     margin: 30px auto;
 }
 
+
 .delete-recipe-preview .recipe-card {
     text-align: left;
+}
+
+/* UPLOAD SAFE IMAGES FORM ENTRY */ 
+input[type="file"].form-input {
+    height: auto;
+    padding: 12px 16px;
+    background-color: white;
+    font-family: Arial, Helvetica, sans-serif;
+    cursor: pointer;
+}
+
+
+input[type="file"].form-input::file-selector-button {
+    padding: 10px 16px;
+    margin-right: 15px;
+
+    border: none;
+    border-radius: 8px;
+
+    background-color: #222;
+    color: white;
+
+    font-size: 14px;
+    cursor: pointer;
 }

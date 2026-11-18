@@ -41,6 +41,62 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   }
 
 
+
+// check red flags in the uploaded recipe image
+$image = $_FILES['recipe_image'] ?? null;
+
+
+// check did image uploaded successfully
+if (
+  !$image ||
+  $image['error'] !== UPLOAD_ERR_OK
+) {
+  $errors[] = 'Please upload a recipe image.';
+}
+
+
+// size. check is image too large
+if (
+  $image &&
+  $image['error'] === UPLOAD_ERR_OK &&
+  $image['size'] > 2 * 1024 * 1024
+) {
+  $errors[] = 'The recipe image must be 2 MB or smaller.';
+}
+
+
+
+
+// check file's actual type png jpeg webp
+if (
+  $image &&
+  $image['error'] === UPLOAD_ERR_OK &&
+  $image['size'] <= 2 * 1024 * 1024
+) {
+
+ // examines the actual uploaded file instead of what it looks like upfront
+  $finfo = new finfo(FILEINFO_MIME_TYPE);
+// inspect temporary file and tell what type of file its actually is
+  $mime = $finfo->file($image['tmp_name']);
+
+  $allowed_types = [
+    'image/jpeg' => 'jpg',
+    'image/png' => 'png',
+    'image/webp' => 'webp'
+  ];
+
+  if (!isset($allowed_types[$mime])) {
+    $errors[] = 'Only JPG, PNG, and WebP images are allowed.';
+  }
+}
+
+
+
+
+
+
+
+
   // only insert if valid
   if (empty($errors)) {
 
@@ -81,7 +137,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Add A Recipe | UXID 241 Cookbook</title>
-  <link rel="stylesheet" href="style.css?v=6">
+  <link rel="stylesheet" href="style.css?v=7">
 </head>
 
 
@@ -99,7 +155,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     method="POST"
     enctype="multipart/form-data">
     
-    
+
     <label for="title"><h2>Recipe Title</h2></label>
     <input
         class="form-input"
