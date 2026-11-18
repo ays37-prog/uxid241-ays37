@@ -28,3 +28,5 @@ Week 6: I used ChatGPT to assist in setting up the recipe category filtration sy
 Week 7: I used ChatGPT to assist in fostering a secure admin session upon email and password authentication. Only the right email and password lets users enter the admin panel if they put in the valid credentials.
 
 Week 8: I used ChatGPT to assist in secure CRUD functionalities that enable users to create, read, update, and delete recipes. Some actions are carried out from form input, while others are through buttons. 
+
+Week 9: I used ChatGPT to assist in sanitizing the image filename, turning the origional file name into one that is completely lowercase, clear of non letter or number chracters,  trimmed of excess characters, and showcases its actual file extension type.
